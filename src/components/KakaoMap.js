@@ -30,7 +30,21 @@ const KakaoMap = () => {
             height: "700px",
           }}
           level={3} // 지도의 확대 레벨
-        />
+        >
+          <MapMarker
+            position={{ lat: location.latitude, lng: location.longitude }}
+          >
+            <div
+              style={{
+                color: "#000",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              당신의 현재 위치!
+            </div>
+          </MapMarker>
+        </Map>
       )}
     </>
   );
