@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Map, MapMarker, useMap } from "react-kakao-maps-sdk";
+import { motion, AnimatePresence } from "framer-motion";
 
 const positions = [
   {
     title: "테스트1",
     latlng: { lat: 37.5436025, lng: 127.0774438 },
+    price: "140,000",
   },
   {
     title: "테스트2",
@@ -21,28 +23,48 @@ const positions = [
   {
     title: "테스트5",
     latlng: { lat: 37.498407, lng: 127.1454097 },
+    price: "140,000",
+    maxParty: 15,
+    currentParty: 10,
   },
   {
     title: "테스트6",
     latlng: { lat: 37.500407, lng: 127.1453497 },
+    price: "60,000",
+    maxParty: 4,
+    currentParty: 0,
   },
   {
     title: "테스트7",
     latlng: { lat: 37.494407, lng: 127.1453297 },
+    price: "80,000",
+    maxParty: 10,
+    currentParty: 7,
   },
   {
     title: "테스트8",
     latlng: { lat: 37.499907, lng: 127.1453447 },
+    price: "70,000",
+    maxParty: 9,
+    currentParty: 1,
   },
   {
     title: "테스트9",
     latlng: { lat: 37.499207, lng: 127.1453537 },
+    price: "320,000",
+    maxParty: 12,
+    currentParty: 4,
   },
 ];
 
 const KakaoMap = () => {
   const [location, setLocation] = useState(null);
   const [isDrawerInfoOpened, setIsDrawerInfoOpened] = useState(false);
+  const [information, setInformation] = useState({
+    price: null,
+    maxParty: null,
+    currentParty: null,
+  });
   useEffect(() => {
     let a = navigator.geolocation.getCurrentPosition(
       successHandler,
@@ -70,8 +92,11 @@ const KakaoMap = () => {
             height: "100vh",
           }}
           level={3} // 지도의 확대 레벨
+          onClick={() => {
+            setIsDrawerInfoOpened(false);
+          }}
         >
-          <MapMarker position={{ lat: location.lat, lng: location.lng }}>
+          {/* <MapMarker position={{ lat: location.lat, lng: location.lng }}>
             <div
               style={{
                 color: "#000",
@@ -81,7 +106,7 @@ const KakaoMap = () => {
             >
               여기에 계신가용가리?
             </div>
-          </MapMarker>
+          </MapMarker> */}
           {positions.map((position, index) => (
             <MapMarker
               key={`${position.title}-${position.latlng}`}
@@ -95,16 +120,35 @@ const KakaoMap = () => {
               }}
               title={position.title} // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
               onClick={() => {
+                setInformation({
+                  price: position.price,
+                  maxParty: position.maxParty,
+                  currentParty: position.currentParty,
+                });
                 setLocation(position.latlng);
                 setIsDrawerInfoOpened(true);
               }}
             />
           ))}
-          {isDrawerInfoOpened && (
-            <div style={{ position: "absolute", top: "200px", zIndex: "1000" }}>
-              123123
-            </div>
-          )}
+          <AnimatePresence>
+            {isDrawerInfoOpened && (
+              <motion.div
+                className="box"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                style={{
+                  position: "absolute",
+                  top: "200px",
+                  zIndex: "1000",
+                  backgroundColor: "white",
+                }}
+              >
+                가격 : {information.price}
+                파티원 : {information.currentParty} / {information.maxParty}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </Map>
       )}
     </div>
